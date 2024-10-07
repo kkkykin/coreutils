@@ -111,8 +111,7 @@ where
             OutputFormat::Hexadecimal => sum_hex,
             OutputFormat::Base64 => match options.algo_name {
                 ALGORITHM_OPTIONS_CRC | ALGORITHM_OPTIONS_SYSV | ALGORITHM_OPTIONS_BSD => sum_hex,
-                _ => encoding::encode(encoding::Format::Base64, &hex::decode(sum_hex).unwrap())
-                    .unwrap(),
+                _ => encoding::for_cksum::BASE64.encode(&hex::decode(sum_hex).unwrap()),
             },
         };
         // The BSD checksum output is 5 digit integer
@@ -168,13 +167,13 @@ where
                 }
             }
         };
-        print!("{}", before_filename);
+        print!("{before_filename}");
         if should_print_filename {
             // The filename might not be valid UTF-8, and filename.display() would mangle the names.
             // Therefore, emit the bytes directly to stdout, without any attempt at encoding them.
             let _dropped_result = stdout().write_all(os_str_as_bytes(filename.as_os_str())?);
         }
-        println!("{}", after_filename);
+        println!("{after_filename}");
     }
 
     Ok(())
